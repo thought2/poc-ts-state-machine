@@ -1,7 +1,6 @@
 import {
   StateMachine,
   GetUnionState,
-  Void,
   GetEventData,
   GetEventsForState,
 } from ".";
@@ -12,18 +11,21 @@ export type GetDispatchStyleViews<stateMachine extends StateMachine, Render> = {
     dispatch: {
       [eventsKey in GetEventsForState<stateKey, stateMachine>]: (
         data: GetEventData<eventsKey, stateMachine>
-      ) => Void;
+      ) => void;
     };
   }) => Render;
 };
 
 export const mkView = <stateMachine extends StateMachine, Render>(
   views: GetDispatchStyleViews<stateMachine, Render>
-): ((_: {
+) => ({
+  state,
+  dispatch,
+}: {
   state: GetUnionState<stateMachine>;
   dispatch: {
     [key in keyof stateMachine["events"]]: (
       data: GetEventData<key, stateMachine>
-    ) => Void;
+    ) => void;
   };
-}) => Render) => 1 as any;
+}): Render => views[state.tag]({ state, dispatch });

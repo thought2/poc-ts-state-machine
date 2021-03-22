@@ -1,15 +1,10 @@
-import {
-  GetUnionState,
-  GetState,
-  GetDispatchStyleViews,
-  DispatchReturn,
-} from "../../src";
+import { GetUnionState, GetState } from "../../src";
 import { StateMachine } from "./state-machine";
 import * as readline from "readline";
 
 export type Cli = {
   text: string[];
-  events: Record<string, () => DispatchReturn>;
+  events: Record<string, () => void>;
 };
 
 export const render = (cli: Cli) => {

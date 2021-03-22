@@ -11,7 +11,7 @@ export const control = mkControl<StateMachine>({
   Exit: () => () => {},
 
   Start: ({ render, nextEvent }) => () => {
-    setTimeout(() => nextEvent.Tick({}), NEXT_TICK);
+    setTimeout(() => nextEvent().Tick({}), NEXT_TICK);
 
     return render.CountingDown({ count: COUNTDOWN_FROM });
   },
@@ -24,7 +24,7 @@ export const control = mkControl<StateMachine>({
     if (count === COUNTDOWN_TO) {
       return render.Boom({});
     } else {
-      setTimeout(() => nextEvent.Tick({}), NEXT_TICK);
+      setTimeout(() => nextEvent().Tick({}), NEXT_TICK);
       return render.CountingDown({ count: count - 1 });
     }
   },

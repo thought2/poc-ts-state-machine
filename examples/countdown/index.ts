@@ -1,14 +1,25 @@
+import { GetUnionState } from "../../src";
+import { StateMachine } from "./state-machine";
 import { control } from "./control";
+import { mkState } from "./state";
 import { view } from "./view";
+import { render } from "./engine";
 
-//control({ present: render(view({ dispatch })) });
+type State = GetUnionState<StateMachine>;
 
-//view({ state, dispatch });
+const state = mkState<State>();
 
-const state = (() => {
-  let data = null;
+const mkDispatch = control({
+  render: state.set,
+  nextEvent: () => {
+    return mkDispatch(state.get());
+  },
+});
 
-  return { set: (value: any) => (data = value) };
-})();
+state.onChange(state => render(view({ state, dispatch: mkDispatch(state) })));
 
-const dispatch = control({ render: () => state.set(""), nextEvent: 1 as any });
+mkDispatch().Init({});
+
+setInterval(function () {
+  console.log("timer that keeps nodejs processing running");
+}, 1000 * 60 * 60);

@@ -54,5 +54,3 @@ export type GetEventData<
   eventName extends keyof stateMachine["events"],
   stateMachine extends StateMachine
 > = stateMachine["events"][eventName]["data"];
-
-export type Void = { readonly brand: unique symbol };
