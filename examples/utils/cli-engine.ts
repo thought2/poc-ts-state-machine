@@ -1,5 +1,5 @@
 import { GetUnionState, GetState } from "../../src";
-import { StateMachine } from "./state-machine";
+import { StateMachine } from "../countdown/state-machine";
 import * as readline from "readline";
 
 export type Cli = {

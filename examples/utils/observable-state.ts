@@ -1,10 +1,10 @@
-type State<T> = {
+type OberservableState<T> = {
   set: (data: undefined | T) => void;
   get: () => undefined | T;
   onChange: (newListener: (data: T) => void) => void;
 };
 
-export const mkState = <T>(): State<T> => {
+export const mkState = <T>(): OberservableState<T> => {
   let data: undefined | T = undefined;
   let listener: undefined | ((data: T) => void) = undefined;
 

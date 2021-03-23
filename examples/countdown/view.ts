@@ -1,6 +1,5 @@
-import { GetUnionState, GetState } from "../../src";
 import { mkView } from "../../src/view";
-import { Cli } from "./engine";
+import { Cli } from "../utils/cli-engine";
 import { StateMachine } from "./state-machine";
 
 export const view = mkView<StateMachine, Cli>({

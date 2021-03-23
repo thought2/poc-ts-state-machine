@@ -1,25 +1,23 @@
 import { GetUnionState } from "../../src";
 import { StateMachine } from "./state-machine";
 import { control } from "./control";
-import { mkState } from "./state";
+import { mkState } from "../utils/observable-state";
 import { view } from "./view";
-import { render } from "./engine";
+import { render } from "../utils/cli-engine";
 
 type State = GetUnionState<StateMachine>;
 
-const state = mkState<State>();
+export const main = () => {
+  const state = mkState<State>();
 
-const mkDispatch = control({
-  render: state.set,
-  nextEvent: () => {
-    return mkDispatch(state.get());
-  },
-});
+  const mkDispatch = control({
+    render: state.set,
+    nextEvent: () => {
+      return mkDispatch(state.get());
+    },
+  });
 
-state.onChange(state => render(view({ state, dispatch: mkDispatch(state) })));
+  state.onChange(state => render(view({ state, dispatch: mkDispatch(state) })));
 
-mkDispatch().Init({});
-
-setInterval(function () {
-  console.log("timer that keeps nodejs processing running");
-}, 1000 * 60 * 60);
+  mkDispatch().Init({});
+};
