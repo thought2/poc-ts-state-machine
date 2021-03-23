@@ -1,3 +1,5 @@
+#! /usr/bin/env ts-node
+
 import { main } from ".";
 
 // hacky timer that keeps nodejs processing running
