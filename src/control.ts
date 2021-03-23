@@ -13,8 +13,10 @@ type GetControls<stateMachine extends StateMachine> = {
       ) => void;
     };
   }) => (
-    state: stateMachine["states"][stateMachine["events"][eventsKey]["from"]]
-  ) => void;
+    state: stateMachine["states"][stateMachine["events"][eventsKey]["from"]] & {
+      tag: stateMachine["events"][eventsKey]["from"];
+    }
+  ) => (data: stateMachine["events"][eventsKey]["data"]) => void;
 };
 
 export const mkControl = <stateMachine extends StateMachine>(
@@ -39,15 +41,24 @@ export const mkControl = <stateMachine extends StateMachine>(
   Object.fromEntries(
     Object.entries(controls).map(([k, v]) => [
       k,
-      v({ render: magicConstructor, nextEvent }),
+      v({
+        render: magicConstructor(tag => (data: any) =>
+          render({
+            tag,
+            ...data,
+          })
+        ),
+        nextEvent,
+      })(state),
     ])
   ) as any;
 
-const magicConstructor = new Proxy(
-  {},
-  {
-    get: function (target, name) {
-      return (data: any) => ({ tag: name, ...data });
-    },
-  }
-);
+const magicConstructor = (handler: (key: string | symbol) => void) =>
+  new Proxy(
+    {},
+    {
+      get: function (target, name) {
+        return handler(name);
+      },
+    }
+  );

@@ -6,26 +6,33 @@ const COUNTDOWN_FROM = 10;
 const COUNTDOWN_TO = 0;
 
 export const control = mkControl<StateMachine>({
-  Init: ({ render }) => () => render.Welcome({}),
+  Init: ({ render }) => () => () => render.Welcome({}),
 
-  Exit: () => () => {},
+  Exit: () => () => () => {},
 
-  Start: ({ render, nextEvent }) => () => {
+  Start: ({ render, nextEvent }) => () => () => {
     setTimeout(() => nextEvent().Tick({}), NEXT_TICK);
 
     return render.CountingDown({ count: COUNTDOWN_FROM });
   },
 
-  Resume: ({ render }) => ({ count }) => render.CountingDown({ count }),
+  Resume: ({ render, nextEvent }) => state => () => {
+    setTimeout(() => nextEvent().Tick({}), NEXT_TICK);
 
-  Pause: ({ render }) => ({ count }) => render.Paused({ count }),
+    render.CountingDown({ count: state.count });
+  },
 
-  Tick: ({ render, nextEvent }) => ({ count }) => {
-    if (count === COUNTDOWN_TO) {
+  Pause: ({ render }) => state => () => render.Paused({ count: state.count }),
+
+  Tick: ({ render, nextEvent }) => state => () => {
+    // WILL BE CAPTURED BY THE SYSTEM SOON:
+    if (state.tag !== "CountingDown") return;
+
+    if (state.count === COUNTDOWN_TO) {
       return render.Boom({});
     } else {
       setTimeout(() => nextEvent().Tick({}), NEXT_TICK);
-      return render.CountingDown({ count: count - 1 });
+      return render.CountingDown({ count: state.count - 1 });
     }
   },
 });

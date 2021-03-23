@@ -9,10 +9,9 @@ export type Cli = {
 
 export const render = (cli: Cli) => {
   process.stdin.removeAllListeners();
-
   process.stdin.on("data", pressedKey => {
     Object.entries(cli.events).forEach(([key, event]) => {
-      if (pressedKey.toString() === key) event();
+      if (pressedKey.toString().trim() === key) event();
     });
   });
 
